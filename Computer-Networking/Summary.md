@@ -13,10 +13,10 @@
 	- Duplexing;
 
 ## Data-link Layer
-- Protocols: Ethernet, Wi-Fi
+- Protocols: Ethernet, Wi-Fi (802.11 family)
 - Protocol Unit Data: Frames
 	- Preamble (8 bytes)
-	- Destination address (6)
+	- Destination address (6-bytes), will change along routing
 	- Source address (6)
 	- Tag (4)
 	- Ether-type (2)
@@ -32,55 +32,140 @@
 	- Broadcast (Ethernet FF:FF:FF:FF:FF:FF)
 
 ## Network Layer
-- Protocols: IP, ARP, DHCP
+- Protocols: IP, ARP, DHCP, IGP (Interior Gateway Protocols), EGP (Exterior Gateway Protocols)
+	- IGP: link-state routing protocols, distance-vector protocols
+	- EGP: IANA (Internet Assigned Numbers Authority)
+		- IANA: distributes IPs
 - Protocol Unit Data: Datagram
+	- Version, Header length, Service Type, Total length
+	- Identification, flags, Fragment Offset
+	- TTL (Time-to-Live), Protocol, Header Checksum
+	- Source IP, Destination IP (will not change during the connection along routing)
+	- Options, padding
 - Addressing: IP address (4 bytes)
 	- IP addresses belong to networks, not to devices attached to the network
+	- Subnet masking: determine if an IP address exists on the same network
+		- 255.255.255.0, 9.100.100.100/24, and op -> 9.100.100
 - Devices:
 	- Router
 	- Home router: home devices to ISP;
 	- Core router (BGP, routers share data with each other)
 - Technology:
-	- NAT
+	- NAT (Network Address Translation)
 	- ARP (Address Resolution Protocol)
 	- Dynamic Host Configuration Protocol: assign IP to networks
+	- CIDR (Classless inter-domain routing), demarcate
+- Address class system:
+	- class A: 1 network id, 3 host id, 0-126, 16M hosts (non-routable 10.0.0.0/8)
+	- class B: 2 network id, 2 host id, 128-191, 64,000 hosts (non-routable 172.16.0.0/12)
+	- class C: 3 network id, 1 host id, 192-224, 254 hosts (non-routable 192.168.0.0/16)
 
 ## Transport Layer
 - Protocols: TCP/UDP (Transmission Control Protocol/ User Datagram Protocol)
-- Protocol Unit Data: Segment
-- Addressing: Port (80 for http)
+- Protocol Unit Data: TCP Segment
+	- Source port (16), destination port (16)
+	- Sequence no. (32, current seg no.), ACK no. (32, no. of next expected segment)
+	- Header len (4), empty (6), control flag (6), Window (16)
+	- Checksum (16), Urgent (16)
+	- Options (0 or 16), Padding
+	- Data payload
+- Addressing: Port (16-bit, 80 for http)
+	- e.g. 10.1.1.100:80 (socket address)
+- Technology:
+	- Multiplexing
+	- Demultiplexing
+	- TCP connection (A to B): Three-Way Handshake
+		- A to B: SYN
+		- B to A: SYN/ACK
+		- A to B: ACK
+	- TCP connection (A to B): Four-Way Handshake
+		- B to A: FIN
+		- A to B: ACK
+		- A to B: FIN
+		- B to A: ACK
+	- Socket: instantiation of an end-point in a potential TCP connection
+		- LISTEN: a tcp socket is ready and listening (server side only)
+		- SYN_SENT: synchronization request sent, connection not established yet (client side only)
+		- SYN-Received: a socket previously LISTEN received a syn request and sent a SYN/ACK back
+		- ESTABLISHED: working order;
+		- FIN_WAIT: FIN sent, ACK not received form the other end;
+		- CLOSE_WAIT
+	- DNS (Domain Name System): a global and highly distributed network services resolves strings of letters into IP addresses
+		- FQDN (Fully qualified domain name): www.google.com
+		- TLD (top-level domain): .com, .edu, .de, .cn, ...
+		- Domain: google (used to demarcate where control moves from TLD to an authoritative name server)
+		- Subdomain: www
+		- DNS support up to 127 levels of domain in total
+	- VPNs and Proxies
+- Devices:
+	- Firewall: a device blocks traffic meeting certain criteria, e.g. port != 80 (can be program, device)
 
 ## Application Layer
+- Allows traffic to be directed to specific network applications
 - Protocols (many): http/smtp/DHCP...
 - Protocol Unit Data: messages
 - Addressing: n/a
-- In OSI 7 layer, including presentation layer
+- In OSI 7 layer (5,6,7 all Application layer in TCP/IP 5-Layer Model)
+	- 6. Presentation layer
+	- 5. Session layer
+- Technology:
+	- Popular web-servers: Microsoft IIS, Apache, nginx
+	- DHCP
+- DNS service (5 kind)
+	- Caching name server (local)
+	- Recursive name server
+	- Root name server (13)
+	- TLD name server
+	- Authoritative name server
+- Devices:
+	- Gateway;
 
-## Devices
-- Hub (now replaced by switch?)
-- Switch
-- Router
-- Gateway
+## Devices (4 required for modern networks)
+- IP Address
+- Subnet Mask
+- Gateway for a host
+- DNS Server
 
 ## Concepts
 - NAT (Network Address Translation):
 	- IP masquerading (One-to-Many NAT, Hide IP of the computer, seems that the data is from the router)
-- IANA: distributes IPs
-- VPN
+	- Non-Routable Address Space
+	- RIP (Regional Internet Registries)
+- VPN (Virtual Private Network)
+	- A technology allowing for the extension of a private/local network to hosts not on that network
+	- **VPN Tunnel**
+	- Cisco AnyConnect
 - Proxy
+	- A server acting on behalf of a client to access another service
+	- Reverse proxy: for encryption and decryption?
 - DNS
 - **ping**: send a special typle of ICMP message called Echo Request (ping 8.8.8.8)
 	- Send back a reply
 - **TraceRoute** (traceroute google.com)
 - **netcat** (nc google.com 80)
 - **nslookup** for **DNS** (nslookup twitter.com)
-- Cloud
+- Cloud Computing
+	- Computing resources are provisioned in a shareable way;
+	- Virtualization
+	- Private cloud, hybrid cloud
+- Host files:
+	- 127.0.0.1::1 localhost
+- IPv6
+	- e.g. 2001:0db8:0000:0000:0000:ff00:0012:3456
+	- short: 2001:db8:0:0:0:ff00:12:3456 (remove leading 0s)
+	- 8 octets: first 4 network ID, next 4 host id
 
 ## Connect to Internet
-- Telephone: Modem (modulator/demodulator)
+- Telephone:
+	- Modem (modulator/demodulator)
+	- PSTN (Public switched telephone network)
+	- USENET
 - Broadband
 	- T-carrier technologies;
 	- DSL (digital subscriber line): ADSL, SDSL
+		- Customer: Inbound >> Outbound (ADSL)
+		- SDSL (symmetric), used by business
+		- HDSL
 	- Fiber connections
 - WAN (Wide Area Network)
 - Point-to-Point
@@ -90,5 +175,7 @@
 	- wireless access point
 	- 4 addresses in header (rather than 2)
 	- 1. Ad-hoc (connects to each other, most common)
-	- 2. WLANS
+	- 2. Wireless LAN (WLANS)
 	- 3. Mesh networks (mixture of 1 and 2)
+	- Security: WEP (Wired Equivalent Privacy)
+	- Cellular Network (Mobile networking)
