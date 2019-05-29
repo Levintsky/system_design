@@ -71,6 +71,8 @@
 	- Data payload
 - Addressing: Port (16-bit, 80 for http)
 	- e.g. 10.1.1.100:80 (socket address)
+	- Sockets:
+		- Process sends/receives messages to/from sockets
 - Technology:
 	- Multiplexing
 	- Demultiplexing
@@ -109,8 +111,20 @@
 	- 6. Presentation layer
 	- 5. Session layer
 - Technology:
+	- HTTP: (based on TCP)
+		- Pull
+		- stateless (server maintains no info about client requests)
+		- User-server state: cookies, kept on user's host, managed by browser
+		- web caching (installed by ISP)
 	- Popular web-servers: Microsoft IIS, Apache, nginx
 	- DHCP
+	- SMTP (based on TCP)
+		- SMTP, POP3, IMAP
+		- Push
+	- Telnet (based on TCP)
+	- FTP (based on TCP): port 21
+	- Streaming (HTTP, RTP) (based on TCP or UDP)
+	- Internet Telephone SIP, RTP (Skype) (based on TCP or UDP)
 - DNS service (5 kind)
 	- Caching name server (local)
 	- Recursive name server
